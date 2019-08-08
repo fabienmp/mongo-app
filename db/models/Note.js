@@ -6,8 +6,6 @@ if (mongoose.connection.readyState === 0)
             console.error('mongoose Error', err)
         });
 
-
-
 let NoteSchema = new Schema({
     text: String,
     createdAt: { type: Date, default: Date.now },
@@ -26,8 +24,6 @@ NoteSchema.pre('update', function () {
 NoteSchema.pre('findOneAndUpdate', function () {
     this.constructor.update({_id: this._id}, { $set: { updatedAt: Date.now() } });
 });
-
-
 
 /** @name db.Note */
 module.exports = mongoose.model('Note', NoteSchema);
