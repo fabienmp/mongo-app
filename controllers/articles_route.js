@@ -5,6 +5,8 @@ const app = express();
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+const path = require('path');
+
 const db = require('../db');
 
 articles_router.get("/Home", (req, res) => {
@@ -59,11 +61,10 @@ articles_router.get("/scrape", (req, res) => {
     });
 });
 
-articles_router.get("/articles/:id", (req, res) => {
+articles_router.get("/article/:id", (req, res) => {
     db.Article.findOne({
             _id: req.params.id
         })
-        .populate("note")
         .then(function (dbArticle) {
             res.json(dbArticle);
         })
@@ -72,18 +73,22 @@ articles_router.get("/articles/:id", (req, res) => {
         });
 });
 
-articles_router.get("/articles", async (req, res) => {
-    let dbArticle = await db.Article.find({
-        saved: false
-    }).catch(function (err) {
-        res.json(err);
-    });
-    res.json(dbArticle);
+articles_router.get("/notes/:article_id", (req, res) => {
+    db.Note.find({
+            articleId: req.params.article_id
+        })
+        .then(function (dbNotes) {
+            res.json(dbNotes);
+        })
+        .catch(function (err) {
+            res.json(err);
+        });
 });
 
-articles_router.get("/articles/saved", async (req, res) => {
+articles_router.get("/articles", async (req, res) => {
+    console.log("Load Saved Articles: " + req.query.loadSavedArticles);
     let dbArticle = await db.Article.find({
-        saved: true
+        saved: req.query.loadSavedArticles == "true"
     }).catch(function (err) {
         res.json(err);
     });
@@ -92,29 +97,42 @@ articles_router.get("/articles/saved", async (req, res) => {
 
 articles_router.post("/article/:id/save", function (req, res) {
 
-    db.Article.findOne({ _id: req.params.id }, function (err, doc){
+    db.Article.findOne({
+        _id: req.params.id
+    }, function (err, doc) {
         doc.saved = true;
         doc.save();
         return res.send("Article Saved!");
-      });
+    });
 
 });
 
-articles_router.post("/article/:id", async (req, res) => {
+articles_router.post("/article/:id/unsave", function (req, res) {
 
-    let dbNote = await db.Note.create(req.body).catch(function (err) {
-        res.json(err);
-    });
-
-    let dbArticle = await db.Article.findOneAndUpdate({
+    db.Article.findOne({
         _id: req.params.id
-    }, {
-        note: dbNote._id
-    }, {
-        new: true
+    }, function (err, doc) {
+        doc.saved = false;
+        doc.save();
+        return res.send("Article Removed!");
     });
 
-    res.json(dbArticle);
+});
+
+articles_router.post("/note/add/:article_id", (req, res) => {
+
+    var note = {};
+    note.text = req.body.noteText;
+    note.articleId = req.params.article_id;
+
+    db.Note.create(note).catch(function (err) {
+            res.json(err);
+        }).then(function (dbNote) {
+            console.log(dbNote);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
 
 });
 
