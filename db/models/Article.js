@@ -11,14 +11,24 @@ let ArticleSchema = new Schema({
         type: String,
         required: true
     },
+    image_url: String,
     text: String,
     link: {
         type: String,
         required: true
     },
+    pusblished_on: {
+        type: Date,
+        default: Date.now
+    },
     note: {
         type: Schema.Types.ObjectId,
         ref: "Note"
+    },
+    saved: {
+        type: Boolean,
+        default: false,
+        required: true
     },
     createdAt: {
         type: Date,
@@ -54,8 +64,6 @@ ArticleSchema.pre('findOneAndUpdate', function () {
         }
     });
 });
-
-
 
 /** @name db.Article */
 module.exports = mongoose.model('Article', ArticleSchema);

@@ -1,5 +1,5 @@
 const url = require('url');
-const uri = 'mongodb://<dbuser>:<dbpassword>@ds353007.mlab.com:53007/heroku_zf4mkwq4';
+const uri = 'mongodb://sa_user:password987@ds261277.mlab.com:61277/heroku_4ztpbfkj';
 
 if (!uri) {
     throw new Error('\033[31mYou need to provide the connection string. ' + 'You can open "db/connection-config.js" and export it or use the "setUri" command.\033[0m');
