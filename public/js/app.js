@@ -10,7 +10,9 @@ $(document).ready(function () {
                     console.log(data);
 
                     var tagNotes = data.map(obj => {
-                        return { tag: obj.text };
+                        return {
+                            tag: obj.text
+                        };
                     });
                     $('.chips-placeholder').chips({
                         data: tagNotes,
@@ -27,23 +29,22 @@ $(document).ready(function () {
                                     });
                                 });
                         },
-                        onChipDelete: function(e,s)
-                        {
+                        onChipDelete: function (e, s) {
                             $.post('/note/remove/' + this.options.articleId, {
-                                noteText: s.childNodes[0].data
-                            },
-                            function (data) {
-                                M.toast({
-                                    html: 'Note Removed!'
+                                    noteText: s.childNodes[0].data
+                                },
+                                function (data) {
+                                    M.toast({
+                                        html: 'Note Removed!'
+                                    });
                                 });
-                            });
                         }
                     });
                 }
             });
         },
         onCloseEnd: function () {
-
+            $('.chips-placeholder').empty();
         }
     });
 
@@ -63,6 +64,7 @@ $(document).ready(function () {
         '<div class="card-content">' +
         '<p></p>' +
         '<div class="card-action">' +
+        '<a href="#" class="articleLink" target="_blank">Link</a>' +
         '<a href="#" class="deleteFromSavedButton">Delete</a>' +
         '<a href="#" class="showAddNotes">Notes</a>' +
         '</div>' +
@@ -95,6 +97,7 @@ $(document).ready(function () {
                 articleTemplate.find(".card-title").text(data[i].title.substring(0, Math.min(data[i].title.length, 50)) + " ...");
                 articleTemplate.find(".card-content p").text(data[i].text.substring(0, Math.min(data[i].text.length, 250)) + " ...");
                 articleTemplate.find(".showAddNotes").attr('id', 'showAddNotes__' + data[i]._id);
+                articleTemplate.find(".articleLink").attr('href', data[i].link);
 
                 if (!saved) {
                     articleTemplate.find(".card-action").css('display', 'none');
