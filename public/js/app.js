@@ -19,13 +19,24 @@ $(document).ready(function () {
                         secondaryPlaceholder: '+Note',
                         onChipAdd: function (e, s) {
                             $.post('/note/add/' + this.options.articleId, {
-                                    noteText: s.textContent
+                                    noteText: s.childNodes[0].data
                                 },
                                 function (data) {
                                     M.toast({
                                         html: 'Note Added!'
                                     });
                                 });
+                        },
+                        onChipDelete: function(e,s)
+                        {
+                            $.post('/note/remove/' + this.options.articleId, {
+                                noteText: s.childNodes[0].data
+                            },
+                            function (data) {
+                                M.toast({
+                                    html: 'Note Removed!'
+                                });
+                            });
                         }
                     });
                 }

@@ -136,4 +136,17 @@ articles_router.post("/note/add/:article_id", (req, res) => {
 
 });
 
+articles_router.post("/note/remove/:article_id", (req, res) => {
+
+    db.Note.find({ text: req.body.noteText, articleId: req.params.article_id }).remove().exec().catch(function (err) {
+            res.json(err);
+        }).then(function (dbNote) {
+            console.log(dbNote);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+
+});
+
 module.exports = articles_router;
